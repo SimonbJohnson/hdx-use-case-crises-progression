@@ -46,7 +46,7 @@ function createTimeline(id,data,crises){
 
 	var margin = {top: 20, right: 20, bottom: 20, left: 20},
 	    width = $(id).width() - margin.left - margin.right,
-	    height = 400 - margin.top - margin.bottom;
+	    height = 600 - margin.top - margin.bottom;
 
 	var svg = d3.select(id)
 	  .append("svg")
@@ -69,7 +69,7 @@ function createTimeline(id,data,crises){
 	    .tickFormat(d3.time.format("%Y"));
 
     svg.append("g")
-      	.attr("transform", "translate(0," + (height) + ")")
+      	.attr("transform", "translate(0," + (height/2) + ")")
       	.attr("class","axis")
       	.call(xAxis);
 
@@ -85,9 +85,9 @@ function createTimeline(id,data,crises){
 		})
 		.attr("y1", function(d,i){
 			if(i % 2 ==0){
-				return height/8*5
+				return height/2-d.count
 			} else {
-				return height/4
+				return height/2
 			}
 		})
 		.attr("x2", function(d){
@@ -95,9 +95,9 @@ function createTimeline(id,data,crises){
 		})
 		.attr("y2", function(d,i){
 			if(i % 2 ==0){
-				return height
+				return height/2
 			} else {
-				return height
+				return height/2+d.count
 			}
 		})
 		.attr("stroke-width", 2)
@@ -114,8 +114,13 @@ function createTimeline(id,data,crises){
     	})
     	.attr("transform", function(d,i){
 			let xText = x(d['Start date']);
-			let yText = height;
-			return "translate(" + xText + "," + yText + ") rotate(-90)"
+			let yText = 280;
+			if(i % 2 ==0){
+				yText = yText -20
+			} else {
+				yText = yText +20
+			}
+			return "translate(" + xText + "," + yText + ") rotate(0)"
 		})
 		.style("text-anchor", function(d,i){
 			/*if(i % 2 ==0){
@@ -147,25 +152,23 @@ function createTimeline(id,data,crises){
 		})
 		.attr("cy", function(d,i){
 			if(i % 2 ==0){
-				return height/8*5
+				return height/2-d.count-20
 			} else {
-				return height/4
+				return height/2+d.count+20
 			}
 		})
-		.attr("r",function(d){
-			return d.count/10;
-		})
+		.attr("r",20)
 		.attr("fill","#f2645a");
 
 	console.log(data);
 	data.forEach(function(d,i){
 		console.log(crises[i]);
 		let centreX = x(crises[i]['Start date']);
-		let centreY = height/8*5
+		let centreY = height/2-crises[i].count-20
 		if(i % 2 ==1){
-			centreY = height/4
+			centreY = height/2+crises[i].count+20
 		}
-		addNodes(svg,d,centreX,centreY,crises[i].angle);
+		addNodes(svg,d,centreX,centreY,-135);
 	});
 }
 
@@ -235,7 +238,7 @@ function createLegend(){
     	.append("text")
     	.text('Crisis Name')
     	.attr("transform", function(d,i){
-			return "translate(" + (width/2) + "," + 150 + ") rotate(-90)"
+			return "translate(" + (width/2) + "," + 130 + ") rotate(0)"
 		})
 		.style("text-anchor", function(d,i){
 			/*if(i % 2 ==0){
@@ -258,9 +261,9 @@ function createLegend(){
 
 	texts
     	.append("text")
-    	.text('Size of red circle represents')
+    	.text('Length of line represents')
     	.attr("transform", function(d,i){
-			return "translate(" + (width/2) + "," + 70 + ") rotate(0)"
+			return "translate(" + (width/2) + "," + 90 + ") rotate(0)"
 		})
 		.style("text-anchor", function(d,i){
 			/*if(i % 2 ==0){
@@ -285,7 +288,7 @@ function createLegend(){
     	.append("text")
     	.text('total number of datasets uploaded.')
     	.attr("transform", function(d,i){
-			return "translate(" + (width/2) + "," + 90 + ") rotate(0)"
+			return "translate(" + (width/2) + "," + 110 + ") rotate(0)"
 		})
 		.style("text-anchor", function(d,i){
 			/*if(i % 2 ==0){
@@ -362,7 +365,7 @@ function createLegend(){
     	.append("circle")
     	.attr("cx", width/2)
 		.attr("cy", 30)
-		.attr("r",10)
+		.attr("r",20)
 		.attr("fill","#f2645a");
 
 	let nodes = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
