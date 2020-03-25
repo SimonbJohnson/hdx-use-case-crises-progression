@@ -46,7 +46,7 @@ function createTimeline(id,data,crises){
 
 	var margin = {top: 20, right: 20, bottom: 20, left: 20},
 	    width = $(id).width() - margin.left - margin.right,
-	    height = 600 - margin.top - margin.bottom;
+	    height = 400 - margin.top - margin.bottom;
 
 	var svg = d3.select(id)
 	  .append("svg")
@@ -69,7 +69,7 @@ function createTimeline(id,data,crises){
 	    .tickFormat(d3.time.format("%Y"));
 
     svg.append("g")
-      	.attr("transform", "translate(0," + (height/2) + ")")
+      	.attr("transform", "translate(0," + (height) + ")")
       	.attr("class","axis")
       	.call(xAxis);
 
@@ -85,9 +85,9 @@ function createTimeline(id,data,crises){
 		})
 		.attr("y1", function(d,i){
 			if(i % 2 ==0){
-				return height/2-d.count
+				return height/8*5
 			} else {
-				return height/2
+				return height/4
 			}
 		})
 		.attr("x2", function(d){
@@ -95,9 +95,9 @@ function createTimeline(id,data,crises){
 		})
 		.attr("y2", function(d,i){
 			if(i % 2 ==0){
-				return height/2
+				return height
 			} else {
-				return height/2+d.count
+				return height
 			}
 		})
 		.attr("stroke-width", 2)
@@ -114,13 +114,8 @@ function createTimeline(id,data,crises){
     	})
     	.attr("transform", function(d,i){
 			let xText = x(d['Start date']);
-			let yText = 280;
-			if(i % 2 ==0){
-				yText = yText -20
-			} else {
-				yText = yText +20
-			}
-			return "translate(" + xText + "," + yText + ") rotate(0)"
+			let yText = height;
+			return "translate(" + xText + "," + yText + ") rotate(-90)"
 		})
 		.style("text-anchor", function(d,i){
 			/*if(i % 2 ==0){
@@ -152,26 +147,29 @@ function createTimeline(id,data,crises){
 		})
 		.attr("cy", function(d,i){
 			if(i % 2 ==0){
-				return height/2-d.count-20
+				return height/8*5
 			} else {
-				return height/2+d.count+20
+				return height/4
 			}
 		})
-		.attr("r",20);
+		.attr("r",function(d){
+			return d.count/10;
+		})
+		.attr("fill","#f2645a");
 
 	console.log(data);
 	data.forEach(function(d,i){
 		console.log(crises[i]);
 		let centreX = x(crises[i]['Start date']);
-		let centreY = height/2-crises[i].count-20
+		let centreY = height/8*5
 		if(i % 2 ==1){
-			centreY = height/2+crises[i].count+20
+			centreY = height/4
 		}
-		addNodes(svg,d,centreX,centreY);
+		addNodes(svg,d,centreX,centreY,crises[i].angle);
 	});
 }
 
-function addNodes(svg,nodes,cx,cy){
+function addNodes(svg,nodes,cx,cy,startangle){
 	let nodesPerLayer = 20;
 	let degrees = 360/nodesPerLayer;
 	let lineLength = 20;
@@ -184,7 +182,7 @@ function addNodes(svg,nodes,cx,cy){
     	.append("circle")
     	.attr("cx", function(d,i){
     		let lineHeight = 2;
-    		let angle = i*degrees-135
+    		let angle = i*degrees+startangle
     		let radians = angle * Math.PI / 180
     		if(i>nodesPerLayer){
     			lineHeight = 3
@@ -194,7 +192,7 @@ function addNodes(svg,nodes,cx,cy){
 		})
 		.attr("cy", function(d,i){
     		let lineHeight = 2;
-    		let angle = i*degrees-135
+    		let angle = i*degrees+startangle
     		let radians = angle * Math.PI / 180
     		if(i>nodesPerLayer){
     			lineHeight = 3
@@ -202,7 +200,8 @@ function addNodes(svg,nodes,cx,cy){
 			let y = -Math.cos(radians) * lineLength * lineHeight+cy;
 			return y;
 		})
-		.attr("r",4);
+		.attr("r",4)
+		.attr("fill","#1bb580");
 }
 
 function createLegend(){
@@ -224,7 +223,7 @@ function createLegend(){
     lines
     	.append("line")
 		.attr("x1", width/2)
-		.attr("y1", 50)
+		.attr("y1", 30)
 		.attr("x2", width/2)
 		.attr("y2", 150)
 		.attr("stroke-width", 2)
@@ -236,7 +235,7 @@ function createLegend(){
     	.append("text")
     	.text('Crisis Name')
     	.attr("transform", function(d,i){
-			return "translate(" + (width/2) + "," + 130 + ") rotate(0)"
+			return "translate(" + (width/2) + "," + 150 + ") rotate(-90)"
 		})
 		.style("text-anchor", function(d,i){
 			/*if(i % 2 ==0){
@@ -259,9 +258,9 @@ function createLegend(){
 
 	texts
     	.append("text")
-    	.text('Length of line represents number of datasets')
+    	.text('Size of red circle represents')
     	.attr("transform", function(d,i){
-			return "translate(" + (width/2) + "," + 100 + ") rotate(0)"
+			return "translate(" + (width/2) + "," + 70 + ") rotate(0)"
 		})
 		.style("text-anchor", function(d,i){
 			/*if(i % 2 ==0){
@@ -284,9 +283,34 @@ function createLegend(){
 
 	texts
     	.append("text")
-    	.text('Each circle represents an organisation uploading data to HDX')
+    	.text('total number of datasets uploaded.')
     	.attr("transform", function(d,i){
-			return "translate(" + (width/2) + "," + 100 + ") rotate(0)"
+			return "translate(" + (width/2) + "," + 90 + ") rotate(0)"
+		})
+		.style("text-anchor", function(d,i){
+			/*if(i % 2 ==0){
+				return "start"
+			} else {
+				return "end"
+			}*/
+			return "end"
+		})
+    	.attr("x", function(d,i){
+			/*if(i % 2 ==0){
+				return 5
+			} else {
+				return -5
+			}*/
+			return -5;
+		})
+		.attr("y", 0)
+		.attr("dy", "1em");
+
+	texts
+    	.append("text")
+    	.text('Each green circle represents an')
+    	.attr("transform", function(d,i){
+			return "translate(" + (width/2) + "," + 10 + ") rotate(0)"
 		})
 		.style("text-anchor", function(d,i){
 			/*if(i % 2 ==0){
@@ -302,7 +326,32 @@ function createLegend(){
 			} else {
 				return -5
 			}*/
-			return -5;
+			return 50;
+		})
+		.attr("y", 0)
+		.attr("dy", "1em");
+
+	texts
+    	.append("text")
+    	.text('organisation uploading data to HDX')
+    	.attr("transform", function(d,i){
+			return "translate(" + (width/2) + "," + 30 + ") rotate(0)"
+		})
+		.style("text-anchor", function(d,i){
+			/*if(i % 2 ==0){
+				return "start"
+			} else {
+				return "end"
+			}*/
+			return "start"
+		})
+    	.attr("x", function(d,i){
+			/*if(i % 2 ==0){
+				return 5
+			} else {
+				return -5
+			}*/
+			return 50;
 		})
 		.attr("y", 0)
 		.attr("dy", "1em");
@@ -313,11 +362,12 @@ function createLegend(){
     	.append("circle")
     	.attr("cx", width/2)
 		.attr("cy", 30)
-		.attr("r",20);
+		.attr("r",10)
+		.attr("fill","#f2645a");
 
 	let nodes = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 
-	addNodes(svg,nodes,width/2,30);
+	addNodes(svg,nodes,width/2,30,-135);
 }
 
 function init(data){
@@ -325,27 +375,33 @@ function init(data){
 	let crises = [
 	  {
 	    "Crisis name": "West Africa Ebola",
-	    "Start date": "08/08/2014"
+	    "Start date": "08/08/2014",
+	    "angle":-135
 	  },
 	  {
 	    "Crisis name": "Nepal Earthquake",
-	    "Start date": "04/25/2015"
+	    "Start date": "04/25/2015",
+	    "angle":-135
 	  },
 	  {
 	    "Crisis name": "Cyclone Idai",
-	    "Start date": "03/14/2019"
+	    "Start date": "03/14/2019",
+	    "angle":-185
 	  },
 	  {
 	    "Crisis name": "DRC Ebola",
-	    "Start date": "07/17/2019"
+	    "Start date": "07/17/2019",
+	    "angle":-135
 	  },
 	  {
 	    "Crisis name": "Yemen",
-	    "Start date": "07/01/2015"
+	    "Start date": "07/01/2015",
+	    "angle":0
 	  },
 	  {
 	    "Crisis name": "Cox's Bazaar",
-	    "Start date": "09/01/2017"
+	    "Start date": "09/01/2017",
+	    "angle":-135
 	  }
 	];
 	[data,crises]  = processData(data,crises);
