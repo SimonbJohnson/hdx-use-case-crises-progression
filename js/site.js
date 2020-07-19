@@ -57,7 +57,7 @@ function createTimeline(id,data,crises){
 	          "translate(" + margin.left + "," + margin.top + ")");
 
 	let startDate = new Date('01/01/14');
-	let endDate = new Date('01/01/20');
+	let endDate = new Date('01/01/21');
 
     var x = d3.time.scale()
       .domain([startDate,endDate])
@@ -405,6 +405,11 @@ function init(data){
 	    "Crisis name": "Cox's Bazaar",
 	    "Start date": "09/01/2017",
 	    "angle":-135
+	  },
+	  {
+	    "Crisis name": "Covid 19",
+	    "Start date": "03/15/2020",
+	    "angle":-135
 	  }
 	];
 	[data,crises]  = processData(data,crises);
@@ -414,7 +419,7 @@ function init(data){
 }
 
 function processData(data,crises){
-	let output = [[],[],[],[],[],[]];
+	let output = [[],[],[],[],[],[],[]];
 
 	crises.forEach(function(c){
 		c.count = 0;
