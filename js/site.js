@@ -407,7 +407,7 @@ function init(data){
 	    "angle":-135
 	  },
 	  {
-	    "Crisis name": "Covid 19",
+	    "Crisis name": "COVID 19",
 	    "Start date": "03/15/2020",
 	    "angle":-135
 	  }
