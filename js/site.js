@@ -80,7 +80,6 @@ function createTimeline(id,data,crises){
     	.enter()
     	.append("line")
 		.attr("x1", function(d){
-			console.log(d['Start date']);
 			return x(d['Start date'])
 		})
 		.attr("y1", function(d,i){
@@ -103,12 +102,41 @@ function createTimeline(id,data,crises){
 		.attr("stroke-width", 2)
 		.attr("stroke", "black");
 
+	crises.forEach(function(d,i){
+		let notches = Math.floor(d.count/50);
+		for(j=0;j<notches;j++){
+			svg.append("g")
+		    	.append("line")
+		    	.attr('class','notches')
+				.attr("x1", x(d['Start date']))
+				.attr("y1", function(){
+					if(i % 2 ==0){
+						return height/2-50*(j+1)
+					} else {
+						return height/2+50*(j+1)
+					}
+				})
+				.attr("x2", x(d['Start date'])+5)
+				.attr("y2", function(){
+					if(i % 2 ==0){
+						return height/2-50*(j+1)
+					} else {
+						return height/2+50*(j+1)
+					}
+				})
+				.attr("stroke-width", 2)
+				.attr("stroke", "black");			
+		}
+	});
+	
+
 	let texts = svg.append("g");
 
 	texts.selectAll("text")
 		.data(crises)
     	.enter()
     	.append("text")
+    	.attr('class', 'crisesname')
     	.text(function(d){
     		return d['Crisis name'];
     	})
@@ -160,9 +188,7 @@ function createTimeline(id,data,crises){
 		.attr("r",20)
 		.attr("fill","#f2645a");
 
-	console.log(data);
 	data.forEach(function(d,i){
-		console.log(crises[i]);
 		let centreX = x(crises[i]['Start date']);
 		let centreY = height/2-crises[i].count-20
 		if(i % 2 ==1){
@@ -232,6 +258,24 @@ function createLegend(){
 		.attr("stroke-width", 2)
 		.attr("stroke", "black");
 
+    lines
+    	.append("line")
+		.attr("x1", width/2)
+		.attr("y1", 80)
+		.attr("x2", width/2+5)
+		.attr("y2", 80)
+		.attr("stroke-width", 2)
+		.attr("stroke", "black");
+
+    lines
+    	.append("line")
+		.attr("x1", width/2)
+		.attr("y1", 130)
+		.attr("x2", width/2+5)
+		.attr("y2", 130)
+		.attr("stroke-width", 2)
+		.attr("stroke", "black");
+
 	let texts = svg.append("g");
 
 	texts
@@ -261,7 +305,7 @@ function createLegend(){
 
 	texts
     	.append("text")
-    	.text('Length of line represents')
+    	.text('Length of line represents the')
     	.attr("transform", function(d,i){
 			return "translate(" + (width/2) + "," + 90 + ") rotate(0)"
 		})
@@ -289,6 +333,31 @@ function createLegend(){
     	.text('total number of datasets uploaded.')
     	.attr("transform", function(d,i){
 			return "translate(" + (width/2) + "," + 110 + ") rotate(0)"
+		})
+		.style("text-anchor", function(d,i){
+			/*if(i % 2 ==0){
+				return "start"
+			} else {
+				return "end"
+			}*/
+			return "end"
+		})
+    	.attr("x", function(d,i){
+			/*if(i % 2 ==0){
+				return 5
+			} else {
+				return -5
+			}*/
+			return -5;
+		})
+		.attr("y", 0)
+		.attr("dy", "1em");
+
+	texts
+    	.append("text")
+    	.text('Every 50 datasets is marked on the line.')
+    	.attr("transform", function(d,i){
+			return "translate(" + (width/2) + "," + 130 + ") rotate(0)"
 		})
 		.style("text-anchor", function(d,i){
 			/*if(i % 2 ==0){
@@ -377,7 +446,7 @@ function init(data){
 
 	let crises = [
 	  {
-	    "Crisis name": "West Africa Ebola",
+	    "Crisis name": "West Africa Ebola Outbreak",
 	    "Start date": "08/08/2014",
 	    "angle":-135
 	  },
@@ -392,7 +461,7 @@ function init(data){
 	    "angle":-185
 	  },
 	  {
-	    "Crisis name": "DRC Ebola",
+	    "Crisis name": "DRC Ebola Outbreak",
 	    "Start date": "07/17/2019",
 	    "angle":-135
 	  },
@@ -402,13 +471,18 @@ function init(data){
 	    "angle":0
 	  },
 	  {
-	    "Crisis name": "Cox's Bazaar",
+	    "Crisis name": "Rohingya Refugee Crisis",
 	    "Start date": "09/01/2017",
 	    "angle":-135
 	  },
 	  {
-	    "Crisis name": "COVID 19",
+	    "Crisis name": "COVID-19 Pandemic",
 	    "Start date": "03/15/2020",
+	    "angle":-135
+	  },
+	  {
+	    "Crisis name": "El Nino",
+	    "Start date": "02/15/2016",
 	    "angle":-135
 	  }
 	];
@@ -419,12 +493,11 @@ function init(data){
 }
 
 function processData(data,crises){
-	let output = [[],[],[],[],[],[],[]];
+	let output = [[],[],[],[],[],[],[],[]];
 
 	crises.forEach(function(c){
 		c.count = 0;
 	})
-	
 	data.forEach(function(d){
 		let id = +d['#crisis+id']-1;
 		if(output[id].indexOf(d['#org+name'])==-1){
