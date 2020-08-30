@@ -466,9 +466,9 @@ function init(data){
 	    "angle":-135
 	  },
 	  {
-	    "Crisis name": "Yemen",
-	    "Start date": "07/01/2015",
-	    "angle":0
+	    "Crisis name": "El Nino",
+	    "Start date": "02/15/2016",
+	    "angle":-135
 	  },
 	  {
 	    "Crisis name": "Rohingya Refugee Crisis",
@@ -479,11 +479,6 @@ function init(data){
 	    "Crisis name": "COVID-19 Pandemic",
 	    "Start date": "03/15/2020",
 	    "angle":-135
-	  },
-	  {
-	    "Crisis name": "El Nino",
-	    "Start date": "02/15/2016",
-	    "angle":-135
 	  }
 	];
 	[data,crises]  = processData(data,crises);
@@ -493,7 +488,7 @@ function init(data){
 }
 
 function processData(data,crises){
-	let output = [[],[],[],[],[],[],[],[]];
+	let output = [[],[],[],[],[],[],[]];
 
 	crises.forEach(function(c){
 		c.count = 0;
