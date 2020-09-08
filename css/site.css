@@ -22,5 +22,13 @@
 }
 
 .crisesname {
-	font-size:14px;
+	font-size:18px;
+}
+
+.tick text {
+	font-size:18px
+}
+
+p {
+	font-size:18px;
 }
