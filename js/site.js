@@ -44,7 +44,7 @@ function createTimeline(id,data,crises){
 		c["Start date"] = new Date(c["Start date"]);
 	})
 
-	var margin = {top: 20, right: 20, bottom: 20, left: 20},
+	var margin = {top: 20, right: 50, bottom: 20, left: 20},
 	    width = $(id).width() - margin.left - margin.right,
 	    height = 600 - margin.top - margin.bottom;
 
@@ -405,7 +405,7 @@ function createLegend(){
 
 	texts
     	.append("text")
-    	.text('organisation uploading data to HDX')
+    	.text('organization uploading data to HDX')
     	.attr("transform", function(d,i){
 			return "translate(" + (width/2) + "," + 30 + ") rotate(0)"
 		})
